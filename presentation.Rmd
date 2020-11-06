@@ -1,0 +1,61 @@
+---
+title: "Population Calculator"
+author: "Lawrence Gulliver"
+date: "04/11/2020"
+output: slidy_presentation
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+## What and Why
+
+For the purposes of designing fictional species, this tool has been developed to take various arguments to project the resulting population growth, assuming consistent reproduction.
+
+Because it calculates strictly based on the inputs, it can be used to calculate the minimum, maximum, or mean values that can be expected as per the design of the species. This should be useful for:
+
+- Determining potential rates of growth
+- Determining feasibility of considered values
+- Determining population at a point in time
+
+## How
+
+The way population expands is difficult to put into a simple equation, as there are a lot of factors involved that change the rate of expansion from cycle to cycle. This system steps through and calculates the result of each reproductive cycle, until either the maximum years or a population cap is reached.
+
+Here is a simplified example:
+<small>
+```{r example, echo = TRUE}
+# Simplified logic
+mature <- 40
+offspring <- 1
+immature <- c(0,0,0,0)
+totals <- data.frame(matrix(nrow = 6, ncol = 6))
+colnames(totals) <- c("Mature", "Total", "i1", "i2", "i3", "i4")
+for (y in 1:6) {
+    mature = mature + immature[length(immature)] # Mature adolescents
+    # Age up by one cycle each remaining generation
+    for (i in (length(immature) - 1):1) { immature[i+1] <- immature[i] }
+    immature[1] <- mature * offspring    # Add new infants
+    totals[y,] <- c(Mature = mature, Total = sum(mature, immature), immature)
+}
+totals
+```
+</small>
+Here you can see each generation aging up through the i (immature) columns, to eventually join the mature collection and add their own offspring.
+
+## Handy Tricks
+
+The tool is simple, but some tips allow it to cover most use-cases.
+
+- Use the parameters as an average - for example, a species that is mature for 20 years but may only reproduce once or twice. Simply adjust the parameters so that it only includes two reproduction cycles.
+- The age of maturity and lifespan can be set equally, meaning each adult only reproduces once in its life. This, or when these two parameters are set near to each other, can make for some fun graphs.
+- Survivability aside from lifespan - for example from predators - is not evaluated. Instead, consider setting the number of offspring to the average number that will survive to adulthood.
+- No consideration to genetics or gender is given, to best handle most cases (asexual reproduction, polygamy, etc)
+
+## In Conclusion
+
+Playing with the parameters, it should be clear how quickly a population can increase in a very short space of time when not limited by environment or resources. Be sure to plan your fictional species accordingly!
+
+
+
